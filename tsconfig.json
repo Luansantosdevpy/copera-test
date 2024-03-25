@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,  
+      "target": "es2018",
+      "module": "commonjs",
+      "rootDir": "./src",
+      "types": ["node"],
+      "outDir": "./dist",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "strictPropertyInitialization": false,
+      "skipLibCheck": true
+    }
+  }
+  
