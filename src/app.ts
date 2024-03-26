@@ -5,6 +5,8 @@ import Logger from './infrastructure/log/logger';
 import routes from './api/routes/routes';
 import dbConfig from './infrastructure/data/config/database';
 import mongoose from 'mongoose';
+import dependencyContainer from './dependencyContainer';
+import { container } from 'tsyringe';
 
 export default class App {
   public express: express.Application = express();
@@ -14,6 +16,7 @@ export default class App {
   public initialize = async (): Promise<void> => {
     await this.connectToMongoDB();
     await this.middlewares();
+    await this.dependencyContainer();
     await this.routes();
   };
 
@@ -41,6 +44,10 @@ export default class App {
       process.exit(1);
     }
   }
+
+  private dependencyContainer = async (): Promise<void> => {
+    await dependencyContainer(container);
+  };
 
   private routes = async (): Promise<void> => {
     this.express.use(await routes());
