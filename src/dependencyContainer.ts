@@ -6,9 +6,18 @@ import HealthCheckService from './application/services/healthCheckService';
 import ToDoRepositoryInterface from './domain/interfaces/repositories/toDoRepositoryInterface';
 import ToDoRepository from './infrastructure/data/repositories/toDoRepository';
 import ToDoService from './application/services/toDoService';
+import { Server } from 'socket.io';
+import socketConfig from './infrastructure/websocket/socketConfig';
 
 export default async (container: DependencyContainer): Promise<void> => {
   Logger.debug('Dependency container initializing...');
+
+  // const server = new Server();
+  // const io = socketConfig(server);
+
+  // container.register('SocketInterface', {
+  //   useValue: { io }
+  // });
 
   container.register<HealthCheckRepositoryInterface>(
     'HealthCheckRepositoryInterface',
