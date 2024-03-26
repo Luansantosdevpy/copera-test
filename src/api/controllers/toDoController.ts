@@ -217,4 +217,60 @@ export default class ToDoController {
         .json({ error: 'Internal Server Error.' });
     }
   };
+
+  public completeInBatch = async (request: Request, response: Response): Promise<Response> => {
+    try {
+      const errors = validationResult(request);
+      const { ids, completed } = request.body;
+  
+      if (!errors.isEmpty()) {
+        return response.status(HttpStatusCode.UnprocessableEntity).json({ errors: errors.array() });
+      }
+  
+      Logger.debug('ToDoController - completeInBatch - call toDoService.completeInBatch');
+      await this.toDoService.completeInBatch(ids, completed);
+  
+      return response.status(HttpStatusCode.Ok).send();
+    } catch (error) {
+      Logger.error(`ToDoController - completeInBatch - error: ${error}`);
+      if (error instanceof ValidationError) {
+        return response.status(HttpStatusCode.UnprocessableEntity).json({ error: error.message });
+      }
+      return response.status(HttpStatusCode.InternalServerError).json({ error: 'Internal Server Error.' });
+    }
+  };
+
+  public deleteInBatch = async (request: Request, response: Response): Promise<Response> => {
+    try {
+      const errors = validationResult(request);
+      const { ids } = request.body;
+  
+      if (!errors.isEmpty()) {
+        return response.status(HttpStatusCode.UnprocessableEntity).json({ errors: errors.array() });
+      }
+  
+      Logger.debug('ToDoController - deleteInBatch - call toDoService.deleteInBatch');
+      await this.toDoService.deleteInBatch(ids);
+  
+      return response.status(HttpStatusCode.Ok).send();
+    } catch (error) {
+      Logger.error(`ToDoController - deleteInBatch - error: ${error}`);
+      if (error instanceof ValidationError) {
+        return response.status(HttpStatusCode.UnprocessableEntity).json({ error: error.message });
+      }
+      return response.status(HttpStatusCode.InternalServerError).json({ error: 'Internal Server Error.' });
+    }
+  };
+
+  public getTodoCount = async (request: Request, response: Response): Promise<Response> => {
+    try {
+      Logger.debug('ToDoController - getTodoCount - call toDoService.getTodoCount');
+      const { pending, completed } = await this.toDoService.getTodoCount();
+  
+      return response.status(HttpStatusCode.Ok).json({ data: { pending, completed } });
+    } catch (error) {
+      Logger.error(`ToDoController - getTodoCount - error: ${error}`);
+      return response.status(HttpStatusCode.InternalServerError).json({ error: 'Internal Server Error.' });
+    }
+  };
 }

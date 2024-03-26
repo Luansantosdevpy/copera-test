@@ -11,19 +11,32 @@ export default async (): Promise<Router> => {
     toDoController.create
   );
 
+  router.post(
+    '/complete-in-batch',
+    toDoController.completeInBatch
+  );
+
+  router.delete(
+    '/delete-in-batch',
+    toDoController.deleteInBatch
+  );
+
   router.get('/', toDoController.findAll);
+
+  router.get('/get-count-todo', toDoController.getTodoCount);
+
   router.get(
     '/:id',
     toDoController.findById
   );
 
   router.put(
-    '/update/description/:id',
+    '/update-description/:id',
     toDoController.updateDescription
   );
 
   router.put(
-    '/update/status/:id',
+    '/update-status/:id',
     toDoController.updateStatus
   );
 

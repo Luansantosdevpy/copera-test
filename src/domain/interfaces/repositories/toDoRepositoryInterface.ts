@@ -8,4 +8,8 @@ export default interface ToDoRepositoryInterface {
   delete(id: string): Promise<void>;
   updateDescription(id: string, body: string): Promise<void>;
   updateStatus(id: string, completed: boolean): Promise<void>;
+  completeInBatch(ids: string[], completed: boolean): Promise<void>;
+  deleteInBatch(ids: string[]): Promise<void>;
+  countPending(): Promise<number>;
+  countCompleted(): Promise<number>;
 }

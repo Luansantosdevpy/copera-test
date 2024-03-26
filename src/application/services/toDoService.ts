@@ -55,6 +55,25 @@ class ToDoService {
     Logger.debug('ToDoService - delete - call toDoRepository.delete');
     return this.toDoRepository.delete(id);
   };
+
+  public completeInBatch = async (ids: string[], completed: boolean): Promise<void> => {
+    Logger.debug('ToDoService - completeInBatch - call toDoRepository.completeInBatch');
+    await this.toDoRepository.completeInBatch(ids, completed);
+  };
+
+  public deleteInBatch = async (ids: string[]): Promise<void> => {
+    Logger.debug('ToDoService - deleteInBatch - call toDoRepository.deleteInBatch');
+    await this.toDoRepository.deleteInBatch(ids);
+  };
+
+  public getTodoCount = async (): Promise<{ pending: number; completed: number }> => {
+    const [pending, completed] = await Promise.all([
+      this.toDoRepository.countPending(),
+      this.toDoRepository.countCompleted(),
+    ]);
+  
+    return { pending, completed };
+  };
 }
 
 export default ToDoService;
