@@ -74,4 +74,27 @@ export default class ToDoRepository implements ToDoRepositoryInterface {
     Logger.debug(`ToDoRepository - findById - execute [id: ${id}]`);
     return await ToDoModel.findById({ _id: id }).exec();
   };
+
+  public completeInBatch = async (ids: string[], completed: boolean): Promise<void> => {
+    Logger.debug(`ToDoRepository - completeInBatch - execute [ids: ${ids}, completed: ${completed}]`);
+    for (const id of ids) {
+      await this.updateStatus(id, completed);
+    }
+  };
+
+  public deleteInBatch = async (ids: string[]): Promise<void> => {
+    Logger.debug(`ToDoRepository - deleteInBatch - execute [ids: ${ids}]`);for (const id of ids) {
+      await this.delete(id);
+    }
+  };
+
+  public countPending = async (): Promise<number> => {
+    Logger.debug('ToDoRepository - countPending - execute');
+    return ToDoModel.countDocuments({ completed: false });
+  };
+  
+  public countCompleted = async (): Promise<number> => {
+    Logger.debug('ToDoRepository - countCompleted - execute');
+    return ToDoModel.countDocuments({ completed: true });
+  };
 }
