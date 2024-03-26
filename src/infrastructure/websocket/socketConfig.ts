@@ -6,10 +6,10 @@ const socketConfig = (server: http.Server): Server => {
   const io = new Server(server);
 
   io.on('connection', (socket) => {
-    Logger.info('Novo cliente conectado:', socket.id);
+    Logger.info('Client connected:', socket.id);
 
     socket.on('disconnect', () => {
-      Logger.info('Cliente desconectado:', socket.id);
+      Logger.info('Client disconect:', socket.id);
     });
   });
 
