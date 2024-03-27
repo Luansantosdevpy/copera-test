@@ -1,6 +1,9 @@
 import 'reflect-metadata';
 import express from 'express';
+import http from 'http';
+import cors from 'cors';
 import { Server } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 import Logger from './infrastructure/log/logger';
 import routes from './api/routes/routes';
 import dbConfig from './infrastructure/data/config/database';
@@ -10,13 +13,14 @@ import { container } from 'tsyringe';
 
 export default class App {
   public express: express.Application = express();
-
   private server: Server;
+  private io: SocketIOServer;
 
   public initialize = async (): Promise<void> => {
     await this.connectToMongoDB();
     await this.middlewares();
     await this.dependencyContainer();
+    // await this.setupWebSocket();
     await this.routes();
   };
 
@@ -32,6 +36,14 @@ export default class App {
 
   private middlewares = async (): Promise<void> => {
     this.express.use(express.json());
+    this.express.use(
+      cors({
+        origin: '*',
+        methods: 'POST, GET, PUT, OPTIONS, PATCH, DELETE',
+        exposedHeaders: 'X-file-name'
+      })
+    );
+    this.express.use(cors());
   };
 
   private async connectToMongoDB(): Promise<void> {
@@ -48,6 +60,19 @@ export default class App {
   private dependencyContainer = async (): Promise<void> => {
     await dependencyContainer(container);
   };
+
+  // private setupWebSocket = async (): Promise<void> => {
+  //   this.server = http.createServer(this.express);
+  //   this.io = new SocketIOServer(this.server);
+
+  //   this.io.on('connection', (socket) => {
+  //     Logger.info('Client connected');
+
+  //     socket.on('disconnect', () => {
+  //       Logger.info('Client disconnected');
+  //     });
+  //   });
+  // };
 
   private routes = async (): Promise<void> => {
     this.express.use(await routes());

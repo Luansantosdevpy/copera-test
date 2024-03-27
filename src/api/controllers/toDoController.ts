@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { Request, Response } from 'express';
+import { Server as SocketIOServer, Socket as SocketIOSocket } from 'socket.io';
 import { HttpStatusCode } from 'axios';
 import { validationResult } from 'express-validator';
 import Logger from '../../infrastructure/log/logger';
@@ -12,7 +13,8 @@ import ToDoService from '../../application/services/toDoService';
 export default class ToDoController {
   constructor(
     @inject(ToDoService)
-    public readonly toDoService: ToDoService
+    public readonly toDoService: ToDoService,
+    // private readonly io: SocketIOServer
   ) {}
   public findAll = async (
     request: Request,
@@ -48,6 +50,8 @@ export default class ToDoController {
 
       Logger.debug('ToDoController - create - call toDoService.create');
       const toDo = await this.toDoService.create(req.body);
+
+      // this.io.emit('nova-tarefa', toDo);
 
       return res.status(HttpStatusCode.Ok).json({ data: toDo });
     } catch (error) {
@@ -119,6 +123,8 @@ export default class ToDoController {
       Logger.debug('ToDoController - update - call toDoService.update');
       await this.toDoService.updateDescription(id, body);
 
+      // this.io.emit('atualizacao-descricao-tarefa', { id, descricao: body });
+
       return response.status(HttpStatusCode.NoContent).send();
     } catch (error) {
       Logger.error(`ToDoController - update - error: ${error}`);
@@ -161,6 +167,8 @@ export default class ToDoController {
       Logger.debug('ToDoController - updateStatus - call toDoService.updateStatus');
       await this.toDoService.updateStatus(id, completed);
 
+      // this.io.emit('atualizacao-status-tarefa', { id, status: completed });
+
       return response.status(HttpStatusCode.NoContent).send();
     } catch (error) {
       Logger.error(`ToDoController - updateStatus - error: ${error}`);
@@ -202,6 +210,8 @@ export default class ToDoController {
       Logger.debug('ToDoController - delete - call toDoService.delete');
       await this.toDoService.delete(id);
 
+      // this.io.emit('deletando-tarefa', { id });
+
       return response.status(HttpStatusCode.NoContent).send();
     } catch (error) {
       Logger.error(`ToDoController - delete - error: ${error}`);
@@ -229,6 +239,8 @@ export default class ToDoController {
   
       Logger.debug('ToDoController - completeInBatch - call toDoService.completeInBatch');
       await this.toDoService.completeInBatch(ids, completed);
+
+      // this.io.emit('conclusao-tarefas-em-lote', { ids, completed });
   
       return response.status(HttpStatusCode.Ok).send();
     } catch (error) {
@@ -251,6 +263,8 @@ export default class ToDoController {
   
       Logger.debug('ToDoController - deleteInBatch - call toDoService.deleteInBatch');
       await this.toDoService.deleteInBatch(ids);
+
+      // this.io.emit('exclusao-tarefas-em-lote', { ids });
   
       return response.status(HttpStatusCode.Ok).send();
     } catch (error) {
